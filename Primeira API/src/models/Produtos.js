@@ -10,10 +10,15 @@ const Produtos = db.define(
             primaryKey: true,
             autoIncrement: true,
         },
-        nome:{
+        nome: {
             type:DataTypes.STRING,
         },
-        //e por ai vai      
+        preco:{
+            type:DataTypes.INTEGER
+        },     
+        quantidade:{
+            type:DataTypes.INTEGER
+        },     
     },
     {
         tableName:"produtos",
