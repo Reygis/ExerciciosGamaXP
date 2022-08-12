@@ -1,0 +1,12 @@
+const { validate, Joi } = require("express-validation");
+
+// O joi gera o erro, enquanto o middleware capta o erro e repassa na request.
+
+
+module.exports = validate({
+    //Não pode ser um objeto simples, precisa ser um Joi object.
+    body: Joi.object({
+        email: Joi.string().email().required(),
+        senha: Joi.string().min(8).required(),
+    }),
+});
