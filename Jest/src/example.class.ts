@@ -11,7 +11,7 @@ export function retornaUndefined():undefined{
 }
 
 export function retornaDefined():string{
-    const texto: string = 'hello world'
+    const texto: string = 'Hello World'
     return texto
 }
 
@@ -23,3 +23,10 @@ export function retornaFalse():boolean {
     return false
 }
 
+export function retornaArray(): string[] {
+    return ['João','Paulo', 'Miguel', 'Pedro']
+}
+
+export function retornaException(): Error {
+    throw new Error('Aconteceu alguma coisa')
+}

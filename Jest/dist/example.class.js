@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.retornaFalse = exports.retornaTrue = exports.retornaDefined = exports.retornaUndefined = exports.retornaNull = exports.retorna10 = void 0;
+exports.retornaException = exports.retornaArray = exports.retornaFalse = exports.retornaTrue = exports.retornaDefined = exports.retornaUndefined = exports.retornaNull = exports.retorna10 = void 0;
 function retorna10() {
     return 10;
 }
@@ -14,7 +14,7 @@ function retornaUndefined() {
 }
 exports.retornaUndefined = retornaUndefined;
 function retornaDefined() {
-    const texto = 'hello world';
+    const texto = 'Hello World';
     return texto;
 }
 exports.retornaDefined = retornaDefined;
@@ -26,3 +26,11 @@ function retornaFalse() {
     return false;
 }
 exports.retornaFalse = retornaFalse;
+function retornaArray() {
+    return ['João', 'Paulo', 'Miguel', 'Pedro'];
+}
+exports.retornaArray = retornaArray;
+function retornaException() {
+    throw Error('Aconteceu alguma coisa');
+}
+exports.retornaException = retornaException;
