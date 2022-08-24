@@ -4,6 +4,7 @@ import { Account } from "./account.class";
 import { Cc } from "./cc.class";
 import { Cp } from "./cp.class";
 import { Accounts } from "./accounts.interface";
+import { Client } from "../client/cliente.class";
 
 export const accountsRouter = express.Router()
 
@@ -11,7 +12,7 @@ accountsRouter.get('/', async (req:Request, res: Response) => {
     try {
         const accounts: Accounts = await AccountService.findAll()
 
-        res.status(200).send(accounts)
+        return  res.status(200).send(accounts)
     } catch (error: any) {
         res.status(500).send(error.message)
     }
@@ -24,7 +25,7 @@ accountsRouter.get('/:id',async (req:Request, res: Response) => {
         const account: Account = await AccountService.find(id)
 
         if(account) return res.status(200).send(account);
-        res.status(404).send("Account not found")
+        return res.status(404).send("Account not found")
     } catch (error: any) {
         res.status(500).send(error.message)
     }
@@ -33,16 +34,19 @@ accountsRouter.get('/:id',async (req:Request, res: Response) => {
 
 accountsRouter.post("/create", async(req: Request, res: Response) => {
     try {
+        let id = new Date().valueOf();
+        let client: Client = new Client(req.body.name, req.body.lastName, req.body.cpf)
+        
         let account: Account
         if(req.body.type == 'cc'){
-            account = new Cc(req.body.account_number, req.body.agency)
+            account = new Cc(req.body.account_number, req.body.agency, client,id)
         } else{
-            account = new Cp(req.body.account_number, req.body.agency)
+            account = new Cp(req.body.account_number, req.body.agency, client,id)
         }
 
         const  newAccount = await AccountService.create(account)
 
-        res.status(201).json(newAccount)
+        return res.status(201).json(newAccount)
     } catch (error: any) {
         res.status(500).send(error.message)
     }
@@ -62,7 +66,7 @@ accountsRouter.put("/:id",async (req: Request, res: Response) => {
         } 
 
         const newAccount = await AccountService.create(accountUpdate)
-        res.status(201).json(newAccount)
+        return res.status(201).json(newAccount)
 
     } catch (error: any) {
         res.status(500).send(error.message)
@@ -80,9 +84,27 @@ accountsRouter.delete("/:id", async(req: Request, res: Response) => {
             return res.status(204)
         }
 
-        res.status(404).send('Account not found')
+        return res.status(404).send('Account not found')
     } catch (error: any) {
         res.status(500).send(error.message)
     }
 
+})
+
+accountsRouter.post("/:id/deposit",async (req:Request, res:Response) => {
+    try {
+        const id: number = parseInt(req.params.id, 10)
+
+        const account: Account = await AccountService.find(id)
+        if(account){
+            const value:number = parseFloat(req.body.value)
+            const balance = await AccountService.deposit(id, value)
+
+            let message = value <= 0 ? "Error! Negative or empt value note allowed" : "Deposit made";
+            return res.status(201).json({message: message, newBalance: balance})
+        }
+        return res.status(404).send('Account not found')
+    } catch (error: any) {
+        res.status(500).send(error.message)
+    }
 })
