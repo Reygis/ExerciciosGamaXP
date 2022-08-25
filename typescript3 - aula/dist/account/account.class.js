@@ -9,6 +9,9 @@ class Account {
         this.balance = 0;
         this.client = client;
     }
+    getClient() {
+        return this.client;
+    }
     getId() {
         return this.id;
     }
@@ -20,10 +23,14 @@ class Account {
             this.balance += value;
             return this.getBalance();
         }
-        return null;
+        return 0;
     }
     withdraw(value) {
-        this.balance -= value;
+        if (value > 0) {
+            this.balance -= value;
+            return this.getBalance();
+        }
+        return 0;
     }
 }
 exports.Account = Account;

@@ -5,6 +5,7 @@ import { Cc } from "./cc.class";
 import { Cp } from "./cp.class";
 import { Accounts } from "./accounts.interface";
 import { Client } from "../client/cliente.class";
+import { parse } from "path";
 
 export const accountsRouter = express.Router()
 
@@ -56,18 +57,16 @@ accountsRouter.put("/:id",async (req: Request, res: Response) => {
     const id:number = parseInt(req.params.id, 10)
     
     try {
-        const accountUpdate: Account = req.body
-        
+       
         const account: Account = await AccountService.find(id)
-
         if(account) {
+            let accountUpdate: Account = new Account(req.body.account_number, req.body.agency, account.getClient(), account.getId())
+
             const updatedAccount = await AccountService.update(id, accountUpdate)
             return res.status(200).json(updatedAccount)
         } 
 
-        const newAccount = await AccountService.create(accountUpdate)
-        return res.status(201).json(newAccount)
-
+        return res.status(404).send("Account not found")
     } catch (error: any) {
         res.status(500).send(error.message)
     }
@@ -81,7 +80,7 @@ accountsRouter.delete("/:id", async(req: Request, res: Response) => {
 
         if(account){
             await AccountService.remove(id)
-            return res.status(204)
+            return res.status(204).send('Account deleted')
         }
 
         return res.status(404).send('Account not found')
@@ -91,20 +90,38 @@ accountsRouter.delete("/:id", async(req: Request, res: Response) => {
 
 })
 
-accountsRouter.post("/:id/deposit",async (req:Request, res:Response) => {
+accountsRouter.post("/deposit/:id",async (req:Request, res:Response) => {
     try {
         const id: number = parseInt(req.params.id, 10)
 
         const account: Account = await AccountService.find(id)
         if(account){
             const value:number = parseFloat(req.body.value)
-            const balance = await AccountService.deposit(id, value)
+            const balance:number | null = await AccountService.deposit(id, value)
 
-            let message = value <= 0 ? "Error! Negative or empt value note allowed" : "Deposit made";
+            let message:string = value <= 0 ? "Error! Negative or empt value note allowed" : "Deposit made";
             return res.status(201).json({message: message, newBalance: balance})
         }
         return res.status(404).send('Account not found')
     } catch (error: any) {
         res.status(500).send(error.message)
+    }
+})
+
+accountsRouter.post("/withdraw/:id",async (req: Request, res: Response) => {
+    try {
+        const id:number = parseInt(req.params.id, 10)
+
+        const account: Account = await AccountService.find(id)
+        if(account){
+            const value:number = parseFloat(req.body.value)
+            const balance:number | null = await AccountService.withdraw(id,value)
+            
+            let message:string = value <= 0 ? "Error! Negative or empt value note allowed" : "Withdraw made";
+            return res.status(201).json({message: message, newBalance: balance})
+        }
+        return res.status(404).send('Account not found')
+    } catch (error:any) {
+        return res.status(500).send(error.message)
     }
 })

@@ -38,6 +38,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.accountsRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const AccountService = __importStar(require("./account.service"));
+const account_class_1 = require("./account.class");
 const cc_class_1 = require("./cc.class");
 const cp_class_1 = require("./cp.class");
 const cliente_class_1 = require("../client/cliente.class");
@@ -84,14 +85,13 @@ exports.accountsRouter.post("/create", (req, res) => __awaiter(void 0, void 0, v
 exports.accountsRouter.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const id = parseInt(req.params.id, 10);
     try {
-        const accountUpdate = req.body;
         const account = yield AccountService.find(id);
         if (account) {
+            let accountUpdate = new account_class_1.Account(req.body.account_number, req.body.agency, account.getClient(), account.getId());
             const updatedAccount = yield AccountService.update(id, accountUpdate);
             return res.status(200).json(updatedAccount);
         }
-        const newAccount = yield AccountService.create(accountUpdate);
-        return res.status(201).json(newAccount);
+        return res.status(404).send("Account not found");
     }
     catch (error) {
         res.status(500).send(error.message);
@@ -103,7 +103,7 @@ exports.accountsRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, vo
         const account = yield AccountService.find(id);
         if (account) {
             yield AccountService.remove(id);
-            return res.status(204);
+            return res.status(204).send('Account deleted');
         }
         return res.status(404).send('Account not found');
     }
@@ -111,7 +111,7 @@ exports.accountsRouter.delete("/:id", (req, res) => __awaiter(void 0, void 0, vo
         res.status(500).send(error.message);
     }
 }));
-exports.accountsRouter.post("/:id/deposit", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+exports.accountsRouter.post("/deposit/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const id = parseInt(req.params.id, 10);
         const account = yield AccountService.find(id);
@@ -125,5 +125,21 @@ exports.accountsRouter.post("/:id/deposit", (req, res) => __awaiter(void 0, void
     }
     catch (error) {
         res.status(500).send(error.message);
+    }
+}));
+exports.accountsRouter.post("/withdraw/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id = parseInt(req.params.id, 10);
+        const account = yield AccountService.find(id);
+        if (account) {
+            const value = parseFloat(req.body.value);
+            const balance = yield AccountService.withdraw(id, value);
+            let message = value <= 0 ? "Error! Negative or empt value note allowed" : "Withdraw made";
+            return res.status(201).json({ message: message, newBalance: balance });
+        }
+        return res.status(404).send('Account not found');
+    }
+    catch (error) {
+        return res.status(500).send(error.message);
     }
 }));

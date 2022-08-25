@@ -40,5 +40,11 @@ export const deposit =async (id:number, value:number):Promise<number | null> => 
     if(!account) return null;
 
     return account.deposit(value)
+}
+export const withdraw = async (id:number, value:number):Promise<number | null> =>{
+    const account = await find(id)
 
+    if(!account) return null;
+
+    return account.withdraw(value)
 }

@@ -5,7 +5,7 @@ export class Account {
     protected account_number: string
     protected agency: string
     private balance: number
-    public client: Client
+    protected client: Client
 
     constructor (account_number: string,agency: string, client: Client,id:number){
         this.id = id
@@ -13,6 +13,10 @@ export class Account {
         this.agency = agency 
         this.balance = 0
         this.client = client
+    }
+
+    public getClient(): Client {
+        return this.client
     }
 
     public getId():number {
@@ -23,15 +27,19 @@ export class Account {
         return this.balance
     }
 
-    public deposit(value: number) : number | null {
+    public deposit(value: number) : number {
         if(value > 0){
             this.balance += value    
             return this.getBalance()
         }
-        return null
+        return 0
     }
 
-    public withdraw(value: number) : void {
-        this.balance -= value 
+    public withdraw(value: number) : number {
+        if(value > 0){
+            this.balance -= value 
+            return this.getBalance()
+        }
+        return 0
     }
 }
