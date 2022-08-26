@@ -48,3 +48,11 @@ export const withdraw = async (id:number, value:number):Promise<number | null> =
 
     return account.withdraw(value)
 }
+export const transfer = async (id_donator:number, id_receiver:number, value:number):Promise<any> =>{
+    const accountDonator = await find(id_donator)
+    const accountReceiver = await find(id_receiver)
+
+    if(!accountDonator && !accountReceiver && accountDonator == accountReceiver) return null;
+    
+    return(accountDonator.withdraw(value), accountReceiver.deposit(value))
+}

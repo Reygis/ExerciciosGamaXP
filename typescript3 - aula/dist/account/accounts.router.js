@@ -143,3 +143,22 @@ exports.accountsRouter.post("/withdraw/:id", (req, res) => __awaiter(void 0, voi
         return res.status(500).send(error.message);
     }
 }));
+exports.accountsRouter.post("/transfer", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const id_donator = parseInt(req.body.id_donator, 10);
+        const id_receiver = parseInt(req.body.id_receiver, 10);
+        const account_donator = yield AccountService.find(id_donator);
+        const account_receiver = yield AccountService.find(id_receiver);
+        if (account_donator && account_receiver) {
+            const value = parseFloat(req.body.value);
+            const balance_donator = yield AccountService.withdraw(id_donator, value);
+            const balance_receiver = yield AccountService.deposit(id_receiver, value);
+            let message = value <= 0 ? "Error! Negative or empt value note allowed" : "Transfer efetueted";
+            return res.status(201).json({ message: message, newBalanceOfDonator: balance_donator, newBalanceOfReceiver: balance_receiver });
+        }
+        return res.status(404).send("One or both of accounts was not found");
+    }
+    catch (error) {
+        return res.status(500).send(error.message);
+    }
+}));

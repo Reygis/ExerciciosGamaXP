@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.withdraw = exports.deposit = exports.remove = exports.update = exports.create = exports.find = exports.findAll = void 0;
+exports.transfer = exports.withdraw = exports.deposit = exports.remove = exports.update = exports.create = exports.find = exports.findAll = void 0;
 const cc_class_1 = require("./cc.class");
 const cp_class_1 = require("./cp.class");
 const cliente_class_1 = require("../client/cliente.class");
@@ -56,3 +56,11 @@ const withdraw = (id, value) => __awaiter(void 0, void 0, void 0, function* () {
     return account.withdraw(value);
 });
 exports.withdraw = withdraw;
+const transfer = (id_donator, id_receiver, value) => __awaiter(void 0, void 0, void 0, function* () {
+    const accountDonator = yield (0, exports.find)(id_donator);
+    const accountReceiver = yield (0, exports.find)(id_receiver);
+    if (!accountDonator && !accountReceiver && accountDonator == accountReceiver)
+        return null;
+    return (accountDonator.withdraw(value), accountReceiver.deposit(value));
+});
+exports.transfer = transfer;

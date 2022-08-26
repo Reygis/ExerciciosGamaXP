@@ -87,7 +87,6 @@ accountsRouter.delete("/:id", async(req: Request, res: Response) => {
     } catch (error: any) {
         res.status(500).send(error.message)
     }
-
 })
 
 accountsRouter.post("/deposit/:id",async (req:Request, res:Response) => {
@@ -123,5 +122,26 @@ accountsRouter.post("/withdraw/:id",async (req: Request, res: Response) => {
         return res.status(404).send('Account not found')
     } catch (error:any) {
         return res.status(500).send(error.message)
+    }
+})
+
+accountsRouter.post("/transfer" , async (req: Request, res: Response) => {
+    try {
+        const id_donator:number = parseInt(req.body.id_donator, 10)
+        const id_receiver:number = parseInt(req.body.id_receiver, 10)
+        
+        const account_donator: Account = await AccountService.find(id_donator)
+        const account_receiver: Account = await AccountService.find(id_receiver)
+        if(account_donator && account_receiver){
+            const value:number = parseFloat(req.body.value)
+            const balance_donator:number | null = await AccountService.withdraw(id_donator, value)
+            const balance_receiver:number | null = await AccountService.deposit(id_receiver, value)
+
+            let message:string = value <= 0 ? "Error! Negative or empt value note allowed" : "Transfer efetueted";
+            return res.status(201).json({message: message, newBalanceOfDonator: balance_donator, newBalanceOfReceiver: balance_receiver})
+        }
+        return res.status(404).send("One or both of accounts was not found")
+    } catch (error:any) {
+        return res.status(500).send(error.message)        
     }
 })
