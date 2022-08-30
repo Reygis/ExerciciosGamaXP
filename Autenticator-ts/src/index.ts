@@ -10,7 +10,7 @@ AppDataSource.initialize()
     .then(()=>{
         const app = express()
 
-        //middlewares later
+        //call middlewares
         app.use(cors())
         app.use(helmet())
         app.use(bodyParser.json())
