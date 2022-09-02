@@ -35,7 +35,7 @@ export class User {
     @UpdateDateColumn()
     updatedAt: Date
 
-    harshPassword(){
+    hashPassword(){
         this.password = bcrypt.hashSync(this.password, 8)
     }
 

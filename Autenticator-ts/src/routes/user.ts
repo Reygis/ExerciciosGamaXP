@@ -15,7 +15,7 @@ router.get(
 )
 
 //create a new user
-router.post("/", [checkJwt, checkRole["ADMIN"]], UserController.newUer)
+router.post("/", [checkJwt, checkRole["ADMIN"]], UserController.newUser)
 
 //edit one user
 router.put(

@@ -63,7 +63,7 @@ class AuthController {
             return res.status(400).send(errors)
         }
 
-        user.harshPassword()
+        user.hashPassword()
         userRepository.save(user)
 
         return res.status(204).send("Password changed!")
