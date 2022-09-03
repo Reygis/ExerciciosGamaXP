@@ -4,17 +4,34 @@ import { User } from "../entity/User"
 
 export class CreateAdminUser1662076020493 implements MigrationInterface {
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        let user = new User()
-        user.username = "admin"
-        user.password = "admin"
-        user.hashPassword()
-        user.role = "ADMIN"
-        const userRepository = AppDataSource.getRepository(User)
-        await userRepository.save(user)
-    }
+  
+        async up(queryRunner: QueryRunner): Promise<void> {
+            await queryRunner.query(
+                `INSERT INTO "authenticationts"."user" ("username", "password", "role") VALUES ("admin", "admin", "ADMIN");`,
+            )
+        }
+    
+        async down(queryRunner: QueryRunner): Promise<void> {
+           
+        }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-    }
+    
+
+
+
+
+
+    // public async up(queryRunner: QueryRunner): Promise<void> {
+    //     let user = new User()
+    //     user.username = "admin"
+    //     user.password = "admin"
+    //     user.hashPassword()
+    //     user.role = "ADMIN"
+    //     const userRepository = AppDataSource.getRepository(User)
+    //     await userRepository.save(user)
+    // }
+
+    // public async down(queryRunner: QueryRunner): Promise<void> {
+    // }
 
 }
