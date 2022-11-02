@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { User } from "../../models";
 
-export class UserController {
+export class Controller {
 
     static create = async (req: Request, res: Response) => {
         const { nome, email, senha, descricao } = req.body;
@@ -18,6 +18,7 @@ export class UserController {
         const users = await User.find()
         return res.json(users)
     };
+
     static findOne = async (req: Request, res: Response) => {
         const { id } = req.params
         try {
@@ -28,6 +29,7 @@ export class UserController {
             return res.status(400).json(error.message)
         }
     };
+
     static update = async (req: Request, res: Response) => {
         const { id } = req.params;
         const { nome, email } = req.body;
@@ -47,6 +49,7 @@ export class UserController {
             return res.status(400).json(error.message)            
         }
     };
+
     static delete = async (req: Request, res: Response) => { 
         const {id} = req.params;
         try {
